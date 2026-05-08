@@ -1,123 +1,75 @@
 #include <iostream>
 using namespace std;
 
-#include "AbstractArray.h"
-#include "MyArray.h"
+// Recursive functions from Task 2
 
-void read(AbstractArray* A, istream& in)
-{
-    int value;
-
-    while (!A->isFull())
-    {
-        cout << "Enter value: ";
-        in >> value;
-        A->add(value);
-    }
+void func(int n) {
+    if (n <= 0) return;
+    cout << n << endl;
+    func(n - 1);
 }
 
-void display(AbstractArray* A, ostream& out)
-{
-    int value;
-    int i = 0;
-
-    while (A->get(i, value))
-    {
-        out << value << " ";
-        i++;
-    }
-
-    out << endl;
+int sum(int n) {
+    if (n <= 0) return 0;
+    return n + sum(n - 1);
 }
 
-void copy(AbstractArray* src, AbstractArray* dst)
-{
-    int value;
-    int i = 0;
-
-    while (src->get(i, value))
-    {
-        dst->add(value);
-        i++;
-    }
+int maxRecursive(int a[], int size) {
+    if (size == 1) return a[0];
+    int m = maxRecursive(a, size - 1);
+    return (a[size - 1] > m) ? a[size - 1] : m;
 }
 
-void insert(AbstractArray* src, AbstractArray* dst, int pos)
-{
-    int value;
-    int temp;
-    int i = pos;
-
-    // find end of dst
-    while (dst->get(i, temp))
-        i++;
-
-    // shift dst elements right
-    while (i > pos)
-    {
-        dst->get(i - 1, temp);
-        dst->insert(i, temp);
-        i--;
-    }
-
-    // insert src elements
-    int j = 0;
-    while (src->get(j, value))
-    {
-        dst->insert(pos, value);
-        pos++;
-        j++;
-    }
+int countDigits(int n) {
+    if (n == 0) return 0;
+    int count = (n % 10 != 0) ? 1 : 0;
+    return count + countDigits(n / 10);
 }
 
-void shiftLeft(AbstractArray* aa, int pos)
-{
-    int value;
-    int i = pos;
-
-    while (aa->get(i + 1, value))
-    {
-        aa->insert(i, value);
-        i++;
-    }
+void displayDigits(int n) {
+    if (n == 0) return;
+    cout << n % 10 << " ";
+    displayDigits(n / 10);
 }
 
-void shiftRight(AbstractArray* aa, int pos)
-{
-    int value;
-    int i = pos;
-
-    while (aa->get(i, value))
-        i++;
-
-    while (i > pos)
-    {
-        aa->get(i - 1, value);
-        aa->insert(i, value);
-        i--;
-    }
+int binarySearch(int a[], int low, int high, int v) {
+    if (low > high) return -1;
+    int mid = (low + high) / 2;
+    if (a[mid] == v) return mid;
+    else if (v > a[mid]) return binarySearch(a, mid + 1, high, v);
+    else return binarySearch(a, low, mid - 1, v);
 }
 
-void stats(AbstractArray* AA, int& max, float& average)
-{
-    int value;
-    int i = 0;
-    int sum = 0;
-    int count = 0;
+// ---------------- MAIN ----------------
+int main() {
+    cout << "Testing func(n):" << endl;
+    func(5);  // prints 5 4 3 2 1
 
-    max = -99999;
+    cout << "\nTesting sum(n):" << endl;
+    cout << "Sum of 10 = " << sum(10) << endl;
 
-    while (AA->get(i, value))
-    {
-        sum += value;
+    cout << "\nTesting maxRecursive:" << endl;
+    int arr[] = { 3, 7, 2, 9, 5 };
+    int size = sizeof(arr) / sizeof(arr[0]);
+    cout << "Max = " << maxRecursive(arr, size) << endl;
 
-        if (value > max)
-            max = value;
+    cout << "\nTesting countDigits:" << endl;
+    cout << "Count digits in 102030 = " << countDigits(102030) << endl;
 
-        count++;
-        i++;
-    }
+    cout << "\nTesting displayDigits:" << endl;
+    cout << "Digits of 12345: ";
+    displayDigits(12345);
+    cout << endl;
 
-    if (count > 0)
-        average = (float)sum / count;
+    cout << "\nTesting binarySearch:" << endl;
+    int sortedArr[] = { 1, 3, 5, 7, 9, 11 };
+    int n = sizeof(sortedArr) / sizeof(sortedArr[0]);
+    int target = 7;
+    int index = binarySearch(sortedArr, 0, n - 1, target);
+    if (index != -1)
+        cout << "Found " << target << " at index " << index << endl;
+    else
+        cout << target << " not found" << endl;
+
+    return 0;
 }
